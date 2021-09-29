@@ -8,8 +8,11 @@ int[] actives;
 int threads = 6;
 PFont f;
 int nm = 0;
+boolean done = false;
+
 void setup() {
-    size(1920, 1080);
+    done = false;
+    size(1080, 1080);
     nm = round(random(30, 1500));
     lines = new Line[nm];
     for (int i = 0; i < lines.length; i++) {
@@ -42,7 +45,8 @@ void setup() {
 }
 
 void reset(){
-    size(1920, 1080);
+    done = false;
+    size(1080, 1080);
     lines = new Line[nm];
     for (int i = 0; i < lines.length; i++) {
         lines[i] = new Line();
@@ -75,8 +79,12 @@ void reset(){
 
 
 void draw() {
+    if(done)
+        return;
+    int ac = 0;
     for (int i = 0; i < threads; ++i) {        
         if (actives[i] < lines.length) {
+            ac ++;
             if (!lines[actives[i]].display)
                 lines[actives[i]].display = true;
             lines[actives[i]].update();
@@ -85,11 +93,14 @@ void draw() {
                 actives[i] = actives[i] + threads;
             }
         }
+        if(ac == 0)
+            done = true;
     }
     fill(0,0,0,0);
     stroke(255);
     strokeWeight(40);
     circle(width / 2, height / 2 - yOff, margin * 2); 
+    saveFrame("chaos_"+nm+"/######.png");
 }
 
 class Line{
@@ -172,6 +183,8 @@ void keyPressed() {
     }
     if (key == 'r') {
         reset();
+    }
+    if(key == 's'){        
     }
 }
 
